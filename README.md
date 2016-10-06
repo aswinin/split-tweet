@@ -11,4 +11,4 @@ Versions history
 
 | Version | Date       | Description |
 |---------|------------|-------------|
-| 0.0.1   | 2016-10-04 | Uncessary fields are removed. |
+| 0.1.0   | 2016-10-04 | Uncessary fields are removed. |
