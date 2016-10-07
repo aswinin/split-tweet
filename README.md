@@ -1,6 +1,8 @@
 split-tweet
 ===========
 
+[![Build Status](https://travis-ci.org/chasset/split-tweet.svg?branch=master)](https://travis-ci.org/chasset/split-tweet)
+
 Description
 -----------
 
