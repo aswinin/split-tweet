@@ -22,7 +22,7 @@ describe('An object with a property sets to null', function () {
 });
 
 describe('An object with many propertie sets to null', function () {
-  it('should remove it', function () {
+  it('should remove them', function () {
     var input = {
       a: 1,
       b: 0,
