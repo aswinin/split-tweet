@@ -2,7 +2,8 @@ const gulp = require('gulp');
 const eslint = require('gulp-eslint');
 const babel = require('gulp-babel');
 const mocha = require('gulp-mocha');
-
+const clean = require('gulp-clean');
+ 
 gulp.task('lint', function() {
   gulp
     .src(["es6/lib/**/*.js", "es6/test/**/*.js"])
@@ -10,7 +11,17 @@ gulp.task('lint', function() {
     .pipe(eslint.format());
 });
 
-gulp.task('transcompile', function() {
+gulp.task('clean', function() {
+  // Clean previous transcompiled scripts
+  gulp
+    .src('lib/**/*.js', {read: false})
+    .pipe(clean());
+  gulp
+    .src('test/**/*.js', {read: false})
+    .pipe(clean());
+});
+
+gulp.task('transcompile', ['clean'], function() {
   gulp
     .src("es6/lib/**/*.js")
     .pipe(babel())
@@ -21,8 +32,15 @@ gulp.task('transcompile', function() {
     .pipe(gulp.dest("test"));
 });
 
-gulp.task('test', function() {
+gulp.task('test', ['transcompile'], function() {
   gulp
     .src('test/**/*.js', {read: false})
-    .pipe(mocha({ reporter: 'spec', growl: true }))
+    .pipe(mocha({ growl: true }))
+});
+
+gulp.task('default', ['test'], function() {});
+
+gulp.task('watch', function() {
+  gulp
+    .watch('es6/**/*.js', ['default']);
 });
