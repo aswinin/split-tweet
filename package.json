@@ -1,6 +1,6 @@
 {
   "name": "split-tweet",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A module to split the information deluge of a tweet",
   "bin": "bin/split-tweet",
   "main": "lib/index.js",
@@ -32,7 +32,11 @@
     "gulp-eslint": "^3.0.1",
     "gulp-mocha": "^3.0.1",
     "mocha": "^3.1.0",
+    "run-sequence": "^1.2.2",
     "unit.js": "^2.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "cytoscape": "^2.7.10",
+    "traverse": "^0.6.6"
+  }
 }

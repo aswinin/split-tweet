@@ -3,42 +3,56 @@ const eslint = require('gulp-eslint');
 const babel = require('gulp-babel');
 const mocha = require('gulp-mocha');
 const clean = require('gulp-clean');
+const runSequence = require('run-sequence');
  
 gulp.task('lint', function() {
-  gulp
+  return gulp
     .src(["es6/lib/**/*.js", "es6/test/**/*.js"])
     .pipe(eslint())
     .pipe(eslint.format());
 });
 
-gulp.task('clean', function() {
+gulp.task('clean-lib', function() {
   // Clean previous transcompiled scripts
-  gulp
+  return gulp
     .src('lib/**/*.js', {read: false})
     .pipe(clean());
-  gulp
+});
+
+gulp.task('clean-test', function() {
+  return gulp
     .src('test/**/*.js', {read: false})
     .pipe(clean());
 });
 
-gulp.task('transcompile', ['clean'], function() {
-  gulp
+gulp.task('transcompile-lib', function() {
+  return gulp
     .src("es6/lib/**/*.js")
     .pipe(babel())
     .pipe(gulp.dest("lib"));
-  gulp
+});
+
+gulp.task('transcompile-test', function() {
+  return gulp
     .src("es6/test/**/*.js")
     .pipe(babel())
     .pipe(gulp.dest("test"));
 });
 
-gulp.task('test', ['transcompile'], function() {
-  gulp
+gulp.task('test', function() {
+  return gulp
     .src('test/**/*.js', {read: false})
     .pipe(mocha({ growl: true }))
 });
 
-gulp.task('default', ['test'], function() {});
+gulp.task('default', function() {
+  runSequence(
+    ['clean-lib', 'clean-test'],
+    ['transcompile-lib', 'transcompile-test'], 
+    'test',
+    'lint'
+  );
+});
 
 gulp.task('watch', function() {
   gulp
