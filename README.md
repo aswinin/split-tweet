@@ -2,6 +2,7 @@ split-tweet
 ===========
 
 [![Build Status](https://travis-ci.org/chasset/split-tweet.svg?branch=master)](https://travis-ci.org/chasset/split-tweet)
+[![Coverage Status](https://coveralls.io/repos/github/chasset/split-tweet/badge.svg)](https://coveralls.io/github/chasset/split-tweet)
 
 Description
 -----------
