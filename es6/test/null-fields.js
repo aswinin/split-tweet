@@ -4,19 +4,20 @@ const describe = require('mocha').describe;
 const it = require('mocha').it;
 const test = require('unit.js');
 
-describe("An object with a null property", function() {
-  it('is returned without the null property', function() {
+describe("remove_null_fields", function() {
+  it('removes a property with null values only on the first level', function() {
     const input = { 
       a: 1, 
       b: 0, 
       c: null, 
-      d: undefined, 
+      d: undefined,
       e: [], 
-      f: {}, 
+      f: {},
+      g: { h: null },
     };
     test.object(input)
-        .hasLength(6)
-        .hasProperties(['a', 'b', 'c', 'd', 'e', 'f']);
+        .hasLength(7)
+        .hasProperties(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
     test.object(input).hasValue(null);
     const expected = { 
       a: 1, 
@@ -24,18 +25,16 @@ describe("An object with a null property", function() {
       d: undefined, 
       e: [], 
       f: {}, 
+      g: { h: null },
     };
     const result = clean.remove_null_fields(input);
     test.object(result)
       .notHasValue(null)
-      .hasLength(5)
-      .hasProperties(['a', 'b', 'd', 'e', 'f'])
+      .hasLength(6)
+      .hasProperties(['a', 'b', 'd', 'e', 'f', 'g'])
       .is(expected);
   });
-});
-
-describe('An object with many propertie sets to null', function( ) {
-  it('is returned without them', function() {
+  it('removes all properties with null values only on the first level', function() {
     const input = { 
       a: 1, 
       b: 0, 
@@ -64,5 +63,37 @@ describe('An object with many propertie sets to null', function( ) {
         .hasLength(6)
         .hasProperties(['a', 'b', 'd', 'e', 'f', 'h'])
         .is(expected);
+  });
+});
+
+describe("remove_all_null_fields", function() {
+  it('removes all properties with null values', function() {
+    const input = { 
+      a: 1, 
+      b: 0, 
+      c: null, 
+      d: undefined,
+      e: [], 
+      f: {},
+      g: { h: null },
+    };
+    test.object(input)
+        .hasLength(7)
+        .hasProperties(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
+    test.object(input).hasValue(null);
+    const expected = { 
+      a: 1, 
+      b: 0, 
+      d: undefined, 
+      e: [], 
+      f: {}, 
+      g: {},
+    };
+    const result = clean.remove_all_null_fields(input);
+    test.object(result)
+      .notHasValue(null)
+      .hasLength(6)
+      .hasProperties(['a', 'b', 'd', 'e', 'f', 'g'])
+      .is(expected);
   });
 });
