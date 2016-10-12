@@ -7,4 +7,8 @@ function remove_null_fields(tweet) {
   return tweet;
 }
 
-module.exports = { remove_null_fields };
+function split(tweet) {
+  return tweet;
+}
+
+module.exports = { remove_null_fields: remove_null_fields, split };
