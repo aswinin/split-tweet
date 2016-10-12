@@ -5,7 +5,7 @@ const it = require('mocha').it;
 const test = require('unit.js');
 
 describe("keep_only_fields_with_data", function() {
-  it('removes all properties with null values or void', function() {
+  it('removes all properties with null values or void objects/arrays', function() {
     const input = { 
       a: 1, 
       b: 0, 
