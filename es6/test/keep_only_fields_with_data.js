@@ -13,7 +13,7 @@ describe("keep_only_fields_with_data", function() {
       d: undefined,
       e: [], 
       f: {},
-      g: { h: null, j: undefined, k: '', n: [], o: {} },
+      g: { h: null, j: undefined, k: '', n: [ {}, {} ], o: { p: { q: {} } } },
       i: '',
       l: { m: false },
     };

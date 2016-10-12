@@ -36,6 +36,7 @@
     "unit.js": "^2.0.0"
   },
   "dependencies": {
+    "clone": "^2.0.0",
     "cytoscape": "^2.7.10",
     "deep-diff": "^0.3.4",
     "traverse": "^0.6.6",

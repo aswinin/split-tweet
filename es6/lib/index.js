@@ -1,6 +1,7 @@
 'use strict';
 
 const traverse = require('traverse');
+const clone = require('clone');
 const diff = require('deep-diff').diff;
 
 function remove_null_fields(tweet) {
@@ -18,10 +19,12 @@ function remove_all_null_fields(tweet) {
 }
 
 function keep_only_fields_with_data(tweet) {
-  let tweet0, tweet1 = Object.assign({}, tweet);
-  while ( diff(tweet1, tweet0) ) {
-    tweet0 = Object.assign({}, tweet1);
-    tweet1 = traverse(tweet1).forEach(function (x) {
+  let tweet0;
+  console.log('--original--');
+  console.log(tweet);
+  while ( diff(tweet0, tweet) ) {
+    tweet0 = clone(tweet);
+    tweet = traverse(tweet).forEach(function (x) {
       if ( 
         x === null || 
         x === undefined ||
@@ -32,8 +35,12 @@ function keep_only_fields_with_data(tweet) {
         this.remove(); 
       }
     });
+    console.log('--step--');
+    console.log(tweet);
+    console.log(tweet0);
+    console.log(diff(tweet0, tweet));
   }
-  return tweet1;
+  return tweet;
 }
 
 function split(tweet) {
