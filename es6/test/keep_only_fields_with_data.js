@@ -13,14 +13,13 @@ describe("keep_only_fields_with_data", function() {
       d: undefined,
       e: [], 
       f: {},
-      g: { h: null, j: undefined, k: '' },
+      g: { h: null, j: undefined, k: '', n: [], o: {} },
       i: '',
       l: { m: false },
     };
     const expected = { 
       a: 1, 
       b: 0, 
-      g: {},
       l: { m: false },
     };
     const result = clean.keep_only_fields_with_data(input);
