@@ -12,49 +12,34 @@ gulp.task('lint', function() {
     .pipe(eslint.format());
 });
 
-gulp.task('clean-lib', function() {
-  // Clean previous transcompiled scripts
+gulp.task('clean', function() {
   return gulp
-    .src('lib/**/*.js', {read: false})
+    .src('es5/**/*.js', {read: false})
     .pipe(clean());
 });
 
-gulp.task('clean-test', function() {
+gulp.task('transcompile', function() {
   return gulp
-    .src('test/**/*.js', {read: false})
-    .pipe(clean());
-});
-
-gulp.task('transcompile-lib', function() {
-  return gulp
-    .src("es6/lib/**/*.js")
+    .src("es6/**/*.js")
     .pipe(babel())
-    .pipe(gulp.dest("lib"));
-});
-
-gulp.task('transcompile-test', function() {
-  return gulp
-    .src("es6/test/**/*.js")
-    .pipe(babel())
-    .pipe(gulp.dest("test"));
+    .pipe(gulp.dest("es5/"));
 });
 
 gulp.task('test', function() {
   return gulp
-    .src('test/**/*.js', {read: false})
+    .src('es5/test/**/*.js', {read: false})
     .pipe(mocha({ growl: true }))
 });
 
 gulp.task('default', function() {
   runSequence(
-    ['clean-lib', 'clean-test'],
-    ['transcompile-lib', 'transcompile-test'], 
+    'clean',
+    'transcompile', 
     'test',
     'lint'
   );
 });
 
 gulp.task('watch', function() {
-  gulp
-    .watch('es6/**/*.js', ['default']);
+  gulp.watch('es6/**/*.js', ['default']);
 });
