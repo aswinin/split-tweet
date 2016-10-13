@@ -1,6 +1,7 @@
 split-tweet
 ===========
 
+[![GitHub version](https://badge.fury.io/gh/chasset%2Fsplit-tweet.svg)](https://badge.fury.io/gh/chasset%2Fsplit-tweet)
 [![Build Status](https://travis-ci.org/chasset/split-tweet.svg?branch=master)](https://travis-ci.org/chasset/split-tweet)
 [![Known Vulnerabilities](https://snyk.io/test/github/chasset/split-tweet/badge.svg)](https://snyk.io/test/github/chasset/split-tweet)
 
