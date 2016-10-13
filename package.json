@@ -1,6 +1,6 @@
 {
   "name": "split-tweet",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A module to split the information deluge of a tweet",
   "bin": "es5/bin/split-tweet",
   "main": "es5/lib/index.js",
