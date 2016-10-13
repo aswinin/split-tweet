@@ -4,6 +4,7 @@ const test = require('unit.js');
 const describe = require('mocha').describe;
 const it = require('mocha').it;
 const clean = require('../lib/index.js').keep_only_fields_with_data;
+const isRemovable = require('../lib/parameters.js').isRemovable;
 
 describe("keep_only_fields_with_data", function() {
   it('removes all properties with null values or void objects/arrays', function() {
@@ -25,7 +26,7 @@ describe("keep_only_fields_with_data", function() {
       l: { m: false },
       r: [ 0 ],
     };
-    const result = clean(input);
+    const result = clean(isRemovable, input);
     test.object(result).is(expected);
   });
 });
