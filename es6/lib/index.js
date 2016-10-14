@@ -11,6 +11,7 @@ const redundantFields = {
     'id_str',
     'in_reply_to_status_id_str',
     'in_reply_to_user_id_str',
+    'quoted_status_id_str',
     'geo',
   ],
   user: [
@@ -121,10 +122,12 @@ function* split(receivedAt, collectId, tweet) {
       let user = tweet.user;
       user = clean('user', user);
       delete tweet.user;
+      const date = new Date(user.created_at);
       yield { 
         meta: { 
           version: 1, 
-          type: 'user', 
+          type: 'user',
+          createdAt: date.toISOString(),
           receivedAt: receivedAt, 
           collectId: collectId, 
         }, 
@@ -162,12 +165,13 @@ function* split(receivedAt, collectId, tweet) {
     }
     // Tweet
     tweet = clean('tweet', tweet);
+    const createdAt = tweet.timestamp_ms ? new Date(Number(tweet.timestamp_ms)) : (new Date(tweet.created_at)).toISOString();
     yield { 
       meta: { 
         version: 1,
         type: 'tweet',
         receivedAt: receivedAt, 
-        createdAt: new Date(Number(tweet.timestamp_ms)),
+        createdAt: createdAt,
         collectId: collectId, 
         userId: userId, 
         placeId: placeId,
