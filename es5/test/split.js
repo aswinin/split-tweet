@@ -497,8 +497,7 @@ describe('split', function () {
         tweet: {
           id: 1234,
           text: "Yes",
-          timestamp_ms: "1475529595743",
-          entities: {}
+          timestamp_ms: "1475529595743"
         }
       }
     });
@@ -587,9 +586,7 @@ describe('split', function () {
         tweet: {
           id: 1234,
           text: "Yes",
-          timestamp_ms: "1475529595743",
-          entities: {},
-          extended_entities: {}
+          timestamp_ms: "1475529595743"
         }
       }
     });

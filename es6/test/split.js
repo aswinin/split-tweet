@@ -543,7 +543,6 @@ describe('split', function( ) {
               id: 1234,
               text: "Yes",
               timestamp_ms: "1475529595743",
-              entities: {},
             },
           },
         });
@@ -646,8 +645,6 @@ describe('split', function( ) {
               id: 1234,
               text: "Yes",
               timestamp_ms: "1475529595743",
-              entities: {},
-              extended_entities: {},
             },
           },
         });
