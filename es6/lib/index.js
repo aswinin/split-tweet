@@ -67,15 +67,15 @@ function removeNullOrEmptyFields(tweet) {
 }
 
 function removeRedundantUnecessaryNullOrEmptyFields(type, object) {
-  for (f in redundantFields[type]) setNull(object, f);
-  for (f in unecessaryFields[type]) setNull(object, f);
+  for (const f in redundantFields[type]) { setNull(object, f); }
+  for (const f in unecessaryFields[type]) { setNull(object, f); }
   return removeNullOrEmptyFields(object);
 }
 
 function* split(receivedAt, collectId, tweet) {
   if (tweet.id) {
     // Remove redundant fiels
-    for (f in fields.tweet) setNull(tweet, f);
+    tweet = removeRedundantUnecessaryNullOrEmptyFields('tweet', tweet);
     // Retweet
     const retweetedId = isSet(tweet, 'retweeted_status.id') ? tweet.retweeted_status.id : undefined; 
     if (retweetedId) {
@@ -92,7 +92,7 @@ function* split(receivedAt, collectId, tweet) {
     let media = new Set();
     if (isSet(tweet, 'entities.media.length') && tweet.entities.media.length > 0) {
       for (let m of tweet.entities.media) {
-        for (f in fields.media) setNull(m, f);
+        m = removeRedundantUnecessaryNullOrEmptyFields('media', m);
         yield {
           meta: { 
             type: 'media', 

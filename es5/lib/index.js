@@ -10,22 +10,49 @@ var traverse = require('traverse');
 var clone = require('clone');
 var diff = require('deep-diff').diff;
 var isSet = require("object-path").has;
+var setNull = require("object-path").empty;
 
-function isRemovableFieldWithValue(x) {
+function redundantFields() {
+  return {
+    tweet: ['id_str', 'in_reply_to_status_id_str', 'in_reply_to_user_id_str', 'geo'],
+    user: ['id_str', 'profile_background_image_url_https', 'profile_image_url_https'],
+    media: ['id_str', 'media_url_https']
+  };
+}
+
+function unecessaryFields() {
+  return {
+    tweet: [],
+    user: ['profile_background_color', 'profile_background_tile', 'profile_link_color', 'profile_sidebar_border_color', 'profile_sidebar_fill_color', 'profile_text_color'],
+    media: ['display_url', 'expanded_url', 'sizes']
+  };
+}
+
+function isNullOrEmpty(x) {
   return x === null || x === undefined || x === '' || Array.isArray(x) && x.length === 0 || (typeof x === 'undefined' ? 'undefined' : _typeof(x)) === 'object' && Object.getOwnPropertyNames(x).length === 0;
 }
 
-function keep_only_fields_with_data(tweet) {
+function removeNullOrEmptyFields(tweet) {
   var tweet0 = void 0;
   while (diff(tweet0, tweet)) {
     tweet0 = clone(tweet);
     tweet = traverse(tweet).forEach(function (x) {
-      if (isRemovableFieldWithValue(x)) {
+      if (isNullOrEmpty(x)) {
         this.remove();
       }
     });
   }
   return tweet;
+}
+
+function removeRedundantUnecessaryNullOrEmptyFields(type, object) {
+  for (var f in redundantFields[type]) {
+    setNull(object, f);
+  }
+  for (var _f in unecessaryFields[type]) {
+    setNull(object, _f);
+  }
+  return removeNullOrEmptyFields(object);
 }
 
 function split(receivedAt, collectId, tweet) {
@@ -36,60 +63,64 @@ function split(receivedAt, collectId, tweet) {
       switch (_context.prev = _context.next) {
         case 0:
           if (!tweet.id) {
-            _context.next = 89;
+            _context.next = 91;
             break;
           }
 
+          // Remove redundant fiels
+          tweet = removeRedundantUnecessaryNullOrEmptyFields('tweet', tweet);
           // Retweet
           retweetedId = isSet(tweet, 'retweeted_status.id') ? tweet.retweeted_status.id : undefined;
 
           if (!retweetedId) {
-            _context.next = 5;
+            _context.next = 6;
             break;
           }
 
-          return _context.delegateYield(split(receivedAt, collectId, tweet.retweeted_status), 't0', 4);
-
-        case 4:
-          delete tweet.retweeted_status;
+          return _context.delegateYield(split(receivedAt, collectId, tweet.retweeted_status), 't0', 5);
 
         case 5:
+          delete tweet.retweeted_status;
+
+        case 6:
           // Quoted tweet
           quotedId = isSet(tweet, 'quoted_status.id') ? tweet.quoted_status.id : undefined;
 
           if (!quotedId) {
-            _context.next = 9;
+            _context.next = 10;
             break;
           }
 
-          return _context.delegateYield(split(receivedAt, collectId, tweet.quoted_status), 't1', 8);
-
-        case 8:
-          delete tweet.quoted_status;
+          return _context.delegateYield(split(receivedAt, collectId, tweet.quoted_status), 't1', 9);
 
         case 9:
+          delete tweet.quoted_status;
+
+        case 10:
           // Media
           media = new Set();
 
           if (!(isSet(tweet, 'entities.media.length') && tweet.entities.media.length > 0)) {
-            _context.next = 39;
+            _context.next = 41;
             break;
           }
 
           _iteratorNormalCompletion = true;
           _didIteratorError = false;
           _iteratorError = undefined;
-          _context.prev = 14;
+          _context.prev = 15;
           _iterator = tweet.entities.media[Symbol.iterator]();
 
-        case 16:
+        case 17:
           if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-            _context.next = 24;
+            _context.next = 26;
             break;
           }
 
           m = _step.value;
-          _context.next = 20;
+
+          m = removeRedundantUnecessaryNullOrEmptyFields('media', m);
+          _context.next = 22;
           return {
             meta: {
               type: 'media',
@@ -100,77 +131,77 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 20:
+        case 22:
           media.add(m.id);
 
-        case 21:
+        case 23:
           _iteratorNormalCompletion = true;
-          _context.next = 16;
-          break;
-
-        case 24:
-          _context.next = 30;
+          _context.next = 17;
           break;
 
         case 26:
-          _context.prev = 26;
-          _context.t2 = _context['catch'](14);
+          _context.next = 32;
+          break;
+
+        case 28:
+          _context.prev = 28;
+          _context.t2 = _context['catch'](15);
           _didIteratorError = true;
           _iteratorError = _context.t2;
 
-        case 30:
-          _context.prev = 30;
-          _context.prev = 31;
+        case 32:
+          _context.prev = 32;
+          _context.prev = 33;
 
           if (!_iteratorNormalCompletion && _iterator.return) {
             _iterator.return();
           }
 
-        case 33:
-          _context.prev = 33;
+        case 35:
+          _context.prev = 35;
 
           if (!_didIteratorError) {
-            _context.next = 36;
+            _context.next = 38;
             break;
           }
 
           throw _iteratorError;
 
-        case 36:
-          return _context.finish(33);
-
-        case 37:
-          return _context.finish(30);
-
         case 38:
-          delete tweet.entities.media;
+          return _context.finish(35);
 
         case 39:
+          return _context.finish(32);
+
+        case 40:
+          delete tweet.entities.media;
+
+        case 41:
           if (!(isSet(tweet, 'extended_entities.media.length') && tweet.extended_entities.media.length > 0)) {
-            _context.next = 69;
+            _context.next = 71;
             break;
           }
 
           _iteratorNormalCompletion2 = true;
           _didIteratorError2 = false;
           _iteratorError2 = undefined;
-          _context.prev = 43;
+          _context.prev = 45;
           _iterator2 = tweet.extended_entities.media[Symbol.iterator]();
 
-        case 45:
+        case 47:
           if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
-            _context.next = 54;
+            _context.next = 56;
             break;
           }
 
           _m = _step2.value;
 
           if (media.has(_m.id)) {
-            _context.next = 51;
+            _context.next = 53;
             break;
           }
 
-          _context.next = 50;
+          _context.next = 52;
           return {
             meta: {
               type: 'media',
@@ -181,64 +212,64 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 50:
+        case 52:
           media.add(_m.id);
 
-        case 51:
+        case 53:
           _iteratorNormalCompletion2 = true;
-          _context.next = 45;
-          break;
-
-        case 54:
-          _context.next = 60;
+          _context.next = 47;
           break;
 
         case 56:
-          _context.prev = 56;
-          _context.t3 = _context['catch'](43);
+          _context.next = 62;
+          break;
+
+        case 58:
+          _context.prev = 58;
+          _context.t3 = _context['catch'](45);
           _didIteratorError2 = true;
           _iteratorError2 = _context.t3;
 
-        case 60:
-          _context.prev = 60;
-          _context.prev = 61;
+        case 62:
+          _context.prev = 62;
+          _context.prev = 63;
 
           if (!_iteratorNormalCompletion2 && _iterator2.return) {
             _iterator2.return();
           }
 
-        case 63:
-          _context.prev = 63;
+        case 65:
+          _context.prev = 65;
 
           if (!_didIteratorError2) {
-            _context.next = 66;
+            _context.next = 68;
             break;
           }
 
           throw _iteratorError2;
 
-        case 66:
-          return _context.finish(63);
-
-        case 67:
-          return _context.finish(60);
-
         case 68:
-          delete tweet.extended_entities.media;
+          return _context.finish(65);
 
         case 69:
+          return _context.finish(62);
+
+        case 70:
+          delete tweet.extended_entities.media;
+
+        case 71:
           // User
           userId = isSet(tweet, 'user.id') ? tweet.user.id : undefined;
 
           if (!userId) {
-            _context.next = 75;
+            _context.next = 77;
             break;
           }
 
           user = tweet.user;
 
           delete tweet.user;
-          _context.next = 75;
+          _context.next = 77;
           return {
             meta: {
               version: 1,
@@ -250,7 +281,7 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 75:
+        case 77:
           // Location
           bb = void 0;
           hasGeo = isSet(tweet, 'coordinates.coordinates');
@@ -262,7 +293,7 @@ function split(receivedAt, collectId, tweet) {
           }
 
           if (!placeId) {
-            _context.next = 85;
+            _context.next = 87;
             break;
           }
 
@@ -275,7 +306,7 @@ function split(receivedAt, collectId, tweet) {
           }
           delete tweet.place;
           // Place
-          _context.next = 85;
+          _context.next = 87;
           return {
             meta: {
               version: 1,
@@ -287,8 +318,8 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 85:
-          _context.next = 87;
+        case 87:
+          _context.next = 89;
           return {
             meta: {
               version: 1,
@@ -306,12 +337,12 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 87:
-          _context.next = 91;
+        case 89:
+          _context.next = 93;
           break;
 
-        case 89:
-          _context.next = 91;
+        case 91:
+          _context.next = 93;
           return {
             meta: {
               type: 'other',
@@ -322,15 +353,17 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 91:
+        case 93:
         case 'end':
           return _context.stop();
       }
     }
-  }, _marked[0], this, [[14, 26, 30, 38], [31,, 33, 37], [43, 56, 60, 68], [61,, 63, 67]]);
+  }, _marked[0], this, [[15, 28, 32, 40], [33,, 35, 39], [45, 58, 62, 70], [63,, 65, 69]]);
 }
 
 module.exports = {
-  keep_only_fields_with_data: keep_only_fields_with_data,
+  isNullOrEmpty: isNullOrEmpty,
+  removeNullOrEmptyFields: removeNullOrEmptyFields,
+  removeRedundantUnecessaryNullOrEmptyFields: removeRedundantUnecessaryNullOrEmptyFields,
   split: split
 };

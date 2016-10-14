@@ -5,9 +5,9 @@ const describe = require('mocha').describe;
 const it = require('mocha').it;
 const removeNullOrEmptyFields = require('../lib/index.js').removeNullOrEmptyFields;
 
-describe("keep_only_fields_with_data", function() {
+describe("removeNullOrEmptyFields", function() {
 
-  it('removes all properties with null values or void objects/arrays', function() {
+  it('removes all properties with null values or empty fields', function() {
     const input = { 
       a: 1, 
       b: 0, 
