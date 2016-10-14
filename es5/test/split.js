@@ -111,7 +111,7 @@ describe('split', function () {
         collectId: 10
       },
       data: {
-        place: { id: 12, city: true, bounding_box: { type: "Polygon", coordinates: [[[-0.3, 51.92], [-0.3, 51.97], [-0.24, 51.97], [-0.24, 51.92], [-0.3, 51.92]]] } }
+        place: { id: 12, city: true, bounding_box: { type: "Polygon", coordinates: [[[-0.3, 51.92], [-0.3, 51.97], [-0.24, 51.97], [-0.24, 51.92]]] } }
       }
     });
 
