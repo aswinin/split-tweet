@@ -1,5 +1,7 @@
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 require('babel-polyfill');
 
 var _marked = [split].map(regeneratorRuntime.mark);
@@ -9,12 +11,16 @@ var clone = require('clone');
 var diff = require('deep-diff').diff;
 var isSet = require("object-path").has;
 
-function keep_only_fields_with_data(isRemovable, tweet) {
+function isRemovableFieldWithValue(x) {
+  return x === null || x === undefined || x === '' || Array.isArray(x) && x.length === 0 || (typeof x === 'undefined' ? 'undefined' : _typeof(x)) === 'object' && Object.getOwnPropertyNames(x).length === 0;
+}
+
+function keep_only_fields_with_data(tweet) {
   var tweet0 = void 0;
   while (diff(tweet0, tweet)) {
     tweet0 = clone(tweet);
     tweet = traverse(tweet).forEach(function (x) {
-      if (isRemovable(x)) {
+      if (isRemovableFieldWithValue(x)) {
         this.remove();
       }
     });

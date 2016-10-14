@@ -6,12 +6,21 @@ const clone = require('clone');
 const diff = require('deep-diff').diff;
 const isSet = require("object-path").has;
 
-function keep_only_fields_with_data(isRemovable, tweet) {
+function isRemovableFieldWithValue(x) {
+  return x === null 
+      || x === undefined 
+      || x === '' 
+      || ( Array.isArray(x) && x.length === 0 ) 
+      || ( typeof x === 'object' && Object.getOwnPropertyNames(x).length === 0 )
+  ;
+}
+
+function keep_only_fields_with_data(tweet) {
   let tweet0;
   while ( diff(tweet0, tweet) ) {
     tweet0 = clone(tweet);
     tweet = traverse(tweet).forEach(function (x) {
-      if ( isRemovable(x) ) { this.remove(); }
+      if ( isRemovableFieldWithValue(x) ) { this.remove(); }
     });
   }
   return tweet;
