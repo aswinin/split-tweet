@@ -17,3 +17,4 @@ Versions history
 |---------|------------|-------------|
 | 0.1     | 2016-10-06 | Fields with null value are removed. |
 | 0.2     | 2016-10-14 | Add split functionnality.           |
+| 0.3     | 2016-10-14 | Split retweet, quoted tweet and media. |
