@@ -37,6 +37,7 @@
     "unit.js": "^2.0.0"
   },
   "dependencies": {
+    "clone": "^2.0.0",
     "deep-diff": "^0.3.4",
     "object-path": "^0.11.2",
     "traverse": "^0.6.6"
