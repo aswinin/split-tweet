@@ -293,7 +293,7 @@ function split(receivedAt, collectId, tweet) {
           place = tweet.place;
 
           if (!hasGeo) {
-            bb = place.bounding_box;
+            bb = clone(place.bounding_box);
             // Fermeture du polygone pour l'index
             bb.coordinates[0].push(bb.coordinates[0][0]);
           }
