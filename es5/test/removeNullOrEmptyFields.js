@@ -7,7 +7,7 @@ var removeNullOrEmptyFields = require('../lib/index.js').removeNullOrEmptyFields
 
 describe("removeNullOrEmptyFields", function () {
 
-  it('removes all properties with null values or empty fields', function () {
+  it('removes all properties with null/empty fields', function () {
     var input = {
       a: 1,
       b: 0,
