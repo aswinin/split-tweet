@@ -19,6 +19,16 @@ function keep_only_fields_with_data(isRemovable, tweet) {
 
 function* split(receivedAt, collectId, tweet) {
   if (tweet['id']) {
+    const retweetedId = isSet(tweet, 'retweeted_status.id') ? tweet['retweeted_status']['id'] : undefined; 
+    if (retweetedId) {
+      yield* split(receivedAt, collectId, tweet['retweeted_status']);
+      delete tweet['retweeted_status'];
+    }
+    const quotedId = isSet(tweet, 'quoted_status.id') ? tweet['quoted_status']['id'] : undefined; 
+    if (quotedId) {
+      yield* split(receivedAt, collectId, tweet['quoted_status']);
+      delete tweet['quoted_status'];
+    }
     const userId = tweet['user']['id']; 
     if (userId) {
       const user = tweet.user;
@@ -58,16 +68,6 @@ function* split(receivedAt, collectId, tweet) {
         data: { place: place },
         version: 1,
       });
-    }
-    const retweetedId = isSet(tweet, 'retweeted_status.id') ? tweet['retweeted_status']['id'] : undefined; 
-    if (retweetedId) {
-      split(receivedAt, collectId, tweet['retweeted_status']);
-      delete tweet['retweeted_status'];
-    }
-    const quotedId = isSet(tweet, 'quoted_status.id') ? tweet['quoted_status']['id'] : undefined; 
-    if (quotedId) {
-      split(receivedAt, collectId, tweet['quoted_status']);
-      delete tweet['quoted_status'];
     }
     yield({ 
       meta: { 

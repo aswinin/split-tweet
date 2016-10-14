@@ -23,27 +23,53 @@ function keep_only_fields_with_data(isRemovable, tweet) {
 }
 
 function split(receivedAt, collectId, tweet) {
-  var userId, user, bb, hasGeo, placeId, place, retweetedId, quotedId;
+  var retweetedId, quotedId, userId, user, bb, hasGeo, placeId, place;
   return regeneratorRuntime.wrap(function split$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           if (!tweet['id']) {
-            _context.next = 25;
+            _context.next = 29;
             break;
           }
 
+          retweetedId = isSet(tweet, 'retweeted_status.id') ? tweet['retweeted_status']['id'] : undefined;
+
+          if (!retweetedId) {
+            _context.next = 5;
+            break;
+          }
+
+          return _context.delegateYield(split(receivedAt, collectId, tweet['retweeted_status']), 't0', 4);
+
+        case 4:
+          delete tweet['retweeted_status'];
+
+        case 5:
+          quotedId = isSet(tweet, 'quoted_status.id') ? tweet['quoted_status']['id'] : undefined;
+
+          if (!quotedId) {
+            _context.next = 9;
+            break;
+          }
+
+          return _context.delegateYield(split(receivedAt, collectId, tweet['quoted_status']), 't1', 8);
+
+        case 8:
+          delete tweet['quoted_status'];
+
+        case 9:
           userId = tweet['user']['id'];
 
           if (!userId) {
-            _context.next = 7;
+            _context.next = 15;
             break;
           }
 
           user = tweet.user;
 
           delete tweet.user;
-          _context.next = 7;
+          _context.next = 15;
           return {
             meta: {
               version: 1,
@@ -55,7 +81,7 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 7:
+        case 15:
           bb = void 0;
           hasGeo = isSet(tweet, 'coordinates.coordinates');
           placeId = isSet(tweet, 'place.id') ? tweet['place']['id'] : undefined;
@@ -65,7 +91,7 @@ function split(receivedAt, collectId, tweet) {
           }
 
           if (!placeId) {
-            _context.next = 17;
+            _context.next = 25;
             break;
           }
 
@@ -77,7 +103,7 @@ function split(receivedAt, collectId, tweet) {
             bb['coordinates'][0].push(bb['coordinates'][0][0]);
           }
           delete tweet.place;
-          _context.next = 17;
+          _context.next = 25;
           return {
             meta: {
               version: 1,
@@ -89,20 +115,8 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 17:
-          retweetedId = isSet(tweet, 'retweeted_status.id') ? tweet['retweeted_status']['id'] : undefined;
-
-          if (retweetedId) {
-            split(receivedAt, collectId, tweet['retweeted_status']);
-            delete tweet['retweeted_status'];
-          }
-          quotedId = isSet(tweet, 'quoted_status.id') ? tweet['quoted_status']['id'] : undefined;
-
-          if (quotedId) {
-            split(receivedAt, collectId, tweet['quoted_status']);
-            delete tweet['quoted_status'];
-          }
-          _context.next = 23;
+        case 25:
+          _context.next = 27;
           return {
             meta: {
               version: 1,
@@ -119,12 +133,12 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 23:
-          _context.next = 27;
+        case 27:
+          _context.next = 31;
           break;
 
-        case 25:
-          _context.next = 27;
+        case 29:
+          _context.next = 31;
           return {
             meta: {
               type: 'other',
@@ -135,7 +149,7 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 27:
+        case 31:
         case 'end':
           return _context.stop();
       }
