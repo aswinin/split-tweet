@@ -18,18 +18,18 @@ function keep_only_fields_with_data(isRemovable, tweet) {
 }
 
 function* split(receivedAt, collectId, tweet) {
-  if (tweet['id']) {
-    const retweetedId = isSet(tweet, 'retweeted_status.id') ? tweet['retweeted_status']['id'] : undefined; 
+  if (tweet.id) {
+    const retweetedId = isSet(tweet, 'retweeted_status.id') ? tweet.retweeted_status.id : undefined; 
     if (retweetedId) {
-      yield* split(receivedAt, collectId, tweet['retweeted_status']);
-      delete tweet['retweeted_status'];
+      yield* split(receivedAt, collectId, tweet.retweeted_status);
+      delete tweet.retweeted_status;
     }
-    const quotedId = isSet(tweet, 'quoted_status.id') ? tweet['quoted_status']['id'] : undefined; 
+    const quotedId = isSet(tweet, 'quoted_status.id') ? tweet.quoted_status.id : undefined; 
     if (quotedId) {
-      yield* split(receivedAt, collectId, tweet['quoted_status']);
-      delete tweet['quoted_status'];
+      yield* split(receivedAt, collectId, tweet.quoted_status);
+      delete tweet.quoted_status;
     }
-    const userId = tweet['user']['id']; 
+    const userId = isSet(tweet, 'user.id') ? tweet.user.id : undefined; 
     if (userId) {
       const user = tweet.user;
       delete tweet.user;
@@ -46,7 +46,7 @@ function* split(receivedAt, collectId, tweet) {
     }
     let bb; 
     const hasGeo = isSet(tweet, 'coordinates.coordinates'); 
-    const placeId = isSet(tweet, 'place.id') ? tweet['place']['id'] : undefined;
+    const placeId = isSet(tweet, 'place.id') ? tweet.place.id : undefined;
     if (hasGeo) {
       bb = tweet['coordinates'];
     }
@@ -55,7 +55,7 @@ function* split(receivedAt, collectId, tweet) {
       if (!hasGeo) {
         bb = place.bounding_box;
         // Fermeture du polygone pour l'index
-        bb['coordinates'][0].push( bb['coordinates'][0][0] );
+        bb.coordinates[0].push( bb.coordinates[0][0] );
       }
       delete tweet.place;
       yield({ 
@@ -74,7 +74,7 @@ function* split(receivedAt, collectId, tweet) {
         version: 1,
         type: 'tweet',
         receivedAt: receivedAt, 
-        createdAt: new Date(Number(tweet['timestamp_ms'])),
+        createdAt: new Date(Number(tweet.timestamp_ms)),
         collectId: collectId, 
         userId: userId, 
         placeId: placeId,

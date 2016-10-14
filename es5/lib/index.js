@@ -28,38 +28,38 @@ function split(receivedAt, collectId, tweet) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          if (!tweet['id']) {
+          if (!tweet.id) {
             _context.next = 29;
             break;
           }
 
-          retweetedId = isSet(tweet, 'retweeted_status.id') ? tweet['retweeted_status']['id'] : undefined;
+          retweetedId = isSet(tweet, 'retweeted_status.id') ? tweet.retweeted_status.id : undefined;
 
           if (!retweetedId) {
             _context.next = 5;
             break;
           }
 
-          return _context.delegateYield(split(receivedAt, collectId, tweet['retweeted_status']), 't0', 4);
+          return _context.delegateYield(split(receivedAt, collectId, tweet.retweeted_status), 't0', 4);
 
         case 4:
-          delete tweet['retweeted_status'];
+          delete tweet.retweeted_status;
 
         case 5:
-          quotedId = isSet(tweet, 'quoted_status.id') ? tweet['quoted_status']['id'] : undefined;
+          quotedId = isSet(tweet, 'quoted_status.id') ? tweet.quoted_status.id : undefined;
 
           if (!quotedId) {
             _context.next = 9;
             break;
           }
 
-          return _context.delegateYield(split(receivedAt, collectId, tweet['quoted_status']), 't1', 8);
+          return _context.delegateYield(split(receivedAt, collectId, tweet.quoted_status), 't1', 8);
 
         case 8:
-          delete tweet['quoted_status'];
+          delete tweet.quoted_status;
 
         case 9:
-          userId = tweet['user']['id'];
+          userId = isSet(tweet, 'user.id') ? tweet.user.id : undefined;
 
           if (!userId) {
             _context.next = 15;
@@ -84,7 +84,7 @@ function split(receivedAt, collectId, tweet) {
         case 15:
           bb = void 0;
           hasGeo = isSet(tweet, 'coordinates.coordinates');
-          placeId = isSet(tweet, 'place.id') ? tweet['place']['id'] : undefined;
+          placeId = isSet(tweet, 'place.id') ? tweet.place.id : undefined;
 
           if (hasGeo) {
             bb = tweet['coordinates'];
@@ -100,7 +100,7 @@ function split(receivedAt, collectId, tweet) {
           if (!hasGeo) {
             bb = place.bounding_box;
             // Fermeture du polygone pour l'index
-            bb['coordinates'][0].push(bb['coordinates'][0][0]);
+            bb.coordinates[0].push(bb.coordinates[0][0]);
           }
           delete tweet.place;
           _context.next = 25;
@@ -122,7 +122,7 @@ function split(receivedAt, collectId, tweet) {
               version: 1,
               type: 'tweet',
               receivedAt: receivedAt,
-              createdAt: new Date(Number(tweet['timestamp_ms'])),
+              createdAt: new Date(Number(tweet.timestamp_ms)),
               collectId: collectId,
               userId: userId,
               placeId: placeId,
