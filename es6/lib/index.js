@@ -31,6 +31,7 @@ function* split(receivedAt, collectId, tweet) {
           collectId: collectId, 
         }, 
         data: { user: user },
+        version: 1,
       });
     }
     let bb; 
@@ -55,6 +56,7 @@ function* split(receivedAt, collectId, tweet) {
           collectId: collectId, 
         }, 
         data: { place: place },
+        version: 1,
       });
     }
     const retweetedId = isSet(tweet, 'retweeted_status.id') ? tweet['retweeted_status']['id'] : undefined; 
@@ -72,6 +74,7 @@ function* split(receivedAt, collectId, tweet) {
         version: 1,
         type: 'tweet',
         receivedAt: receivedAt, 
+        createdAt: new Date(Number(tweet['timestamp_ms'])),
         collectId: collectId, 
         userId: userId, 
         placeId: placeId,
@@ -79,16 +82,17 @@ function* split(receivedAt, collectId, tweet) {
         geo: bb,
       }, 
       data: { tweet: tweet }, 
+      version: 1,
     });
   } else {
     yield({ 
       meta: { 
-        version: 1,
         type: 'other',
         receivedAt: receivedAt, 
         collectId: collectId, 
       }, 
       data: { other: tweet }, 
+      version: 1,
     });
   }
 }

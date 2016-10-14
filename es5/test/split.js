@@ -5,21 +5,27 @@ var describe = require('mocha').describe;
 var it = require('mocha').it;
 var test = require('unit.js');
 
+var createdAt = new Date(1475529595743);
+var receivedAt = '2016-10-13T07:59:09.324Z';
+var collectId = 10;
+
 describe('split', function () {
 
   it('decomposes a tweet in a user and a message', function () {
-    var receivedAt = '2016-10-13T07:59:09.324Z';
-    var collectId = 10;
+
     var input = {
       id: 1234,
       text: "Yes",
+      timestamp_ms: "1475529595743",
       user: {
         id: 5678,
         login: "toto"
       }
     };
     var data = split(receivedAt, collectId, input);
+
     test.object(data.next().value).is({
+      version: 1,
       meta: {
         version: 1,
         type: 'user',
@@ -33,10 +39,13 @@ describe('split', function () {
         }
       }
     });
+
     test.object(data.next().value).is({
+      version: 1,
       meta: {
         version: 1,
         type: 'tweet',
+        createdAt: createdAt,
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10,
         userId: 5678,
@@ -47,19 +56,21 @@ describe('split', function () {
       data: {
         tweet: {
           id: 1234,
-          text: "Yes"
+          text: "Yes",
+          timestamp_ms: "1475529595743"
         }
       }
     });
+
     test.bool(data.next().done).isTrue;
   });
 
   it('decomposes a tweet in a user, a place and a message', function () {
-    var receivedAt = '2016-10-13T07:59:09.324Z';
-    var collectId = 10;
+
     var input = {
       id: 1234,
       text: "Yes",
+      timestamp_ms: "1475529595743",
       user: {
         id: 5678,
         login: "toto"
@@ -67,7 +78,9 @@ describe('split', function () {
       place: { id: 12, city: true, bounding_box: { type: "Polygon", coordinates: [[[-0.3, 51.92], [-0.3, 51.97], [-0.24, 51.97], [-0.24, 51.92]]] } }
     };
     var data = split(receivedAt, collectId, input);
+
     test.object(data.next().value).is({
+      version: 1,
       meta: {
         version: 1,
         type: 'user',
@@ -81,7 +94,9 @@ describe('split', function () {
         }
       }
     });
+
     test.object(data.next().value).is({
+      version: 1,
       meta: {
         version: 1,
         type: 'place',
@@ -92,10 +107,13 @@ describe('split', function () {
         place: { id: 12, city: true, bounding_box: { type: "Polygon", coordinates: [[[-0.3, 51.92], [-0.3, 51.97], [-0.24, 51.97], [-0.24, 51.92], [-0.3, 51.92]]] } }
       }
     });
+
     test.object(data.next().value).is({
+      version: 1,
       meta: {
         version: 1,
         type: 'tweet',
+        createdAt: createdAt,
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10,
         userId: 5678,
@@ -106,19 +124,21 @@ describe('split', function () {
       data: {
         tweet: {
           id: 1234,
-          text: "Yes"
+          text: "Yes",
+          timestamp_ms: "1475529595743"
         }
       }
     });
+
     test.bool(data.next().done).isTrue;
   });
 
   it('decomposes a tweet in a user, a point and a message', function () {
-    var receivedAt = '2016-10-13T07:59:09.324Z';
-    var collectId = 10;
+
     var input = {
       id: 1234,
       text: "Yes",
+      timestamp_ms: "1475529595743",
       user: {
         id: 5678,
         login: "toto"
@@ -130,7 +150,9 @@ describe('split', function () {
       }
     };
     var data = split(receivedAt, collectId, input);
+
     test.object(data.next().value).is({
+      version: 1,
       meta: {
         version: 1,
         type: 'user',
@@ -144,7 +166,9 @@ describe('split', function () {
         }
       }
     });
+
     test.object(data.next().value).is({
+      version: 1,
       meta: {
         version: 1,
         type: 'place',
@@ -155,10 +179,13 @@ describe('split', function () {
         place: { id: 12, city: true, bounding_box: { type: "Polygon", coordinates: [[[-0.3, 51.92], [-0.3, 51.97], [-0.24, 51.97], [-0.24, 51.92]]] } }
       }
     });
+
     test.object(data.next().value).is({
+      version: 1,
       meta: {
         version: 1,
         type: 'tweet',
+        createdAt: createdAt,
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10,
         userId: 5678,
@@ -170,27 +197,30 @@ describe('split', function () {
         tweet: {
           id: 1234,
           text: "Yes",
-          coordinates: { type: "Point", coordinates: [-47.92, -15.77] }
+          coordinates: { type: "Point", coordinates: [-47.92, -15.77] },
+          timestamp_ms: "1475529595743"
         }
       }
     });
+
     test.bool(data.next().done).isTrue;
   });
 
   it('decomposes a non tweet in an other object', function () {
-    var receivedAt = '2016-10-13T07:59:09.324Z';
-    var collectId = 10;
+
     var input = { blabla: true };
     var data = split(receivedAt, collectId, input);
+
     test.object(data.next().value).is({
+      version: 1,
       meta: {
-        version: 1,
         type: 'other',
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10
       },
       data: { other: { blabla: true } }
     });
+
     test.bool(data.next().done).isTrue;
   });
 });

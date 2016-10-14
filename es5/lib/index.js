@@ -51,7 +51,8 @@ function split(receivedAt, collectId, tweet) {
               receivedAt: receivedAt,
               collectId: collectId
             },
-            data: { user: user }
+            data: { user: user },
+            version: 1
           };
 
         case 7:
@@ -84,7 +85,8 @@ function split(receivedAt, collectId, tweet) {
               receivedAt: receivedAt,
               collectId: collectId
             },
-            data: { place: place }
+            data: { place: place },
+            version: 1
           };
 
         case 17:
@@ -106,13 +108,15 @@ function split(receivedAt, collectId, tweet) {
               version: 1,
               type: 'tweet',
               receivedAt: receivedAt,
+              createdAt: new Date(Number(tweet['timestamp_ms'])),
               collectId: collectId,
               userId: userId,
               placeId: placeId,
               retweetedId: retweetedId,
               geo: bb
             },
-            data: { tweet: tweet }
+            data: { tweet: tweet },
+            version: 1
           };
 
         case 23:
@@ -123,12 +127,12 @@ function split(receivedAt, collectId, tweet) {
           _context.next = 27;
           return {
             meta: {
-              version: 1,
               type: 'other',
               receivedAt: receivedAt,
               collectId: collectId
             },
-            data: { other: tweet }
+            data: { other: tweet },
+            version: 1
           };
 
         case 27:
