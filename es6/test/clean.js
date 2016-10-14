@@ -14,6 +14,7 @@ describe("clean", function() {
       'id_str': 1,
       'in_reply_to_status_id_str': 1,
       'in_reply_to_user_id_str': 1,
+      'quoted_status_id_str': 1,
       'geo': 1,
       c: null, 
       d: undefined,

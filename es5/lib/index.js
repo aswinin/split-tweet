@@ -12,7 +12,7 @@ var diff = require('deep-diff').diff;
 var path = require("object-path");
 
 var redundantFields = {
-  tweet: ['id_str', 'in_reply_to_status_id_str', 'in_reply_to_user_id_str', 'geo'],
+  tweet: ['id_str', 'in_reply_to_status_id_str', 'in_reply_to_user_id_str', 'quoted_status_id_str', 'geo'],
   user: ['id_str', 'profile_background_image_url_https', 'profile_image_url_https'],
   media: ['id_str', 'media_url_https']
 };
@@ -64,14 +64,14 @@ function buildMediaObject(receivedAt, collectId, m) {
 }
 
 function split(receivedAt, collectId, tweet) {
-  var retweetedId, quotedId, media, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, m, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, _m, userId, user, bb, hasGeo, placeId, place;
+  var retweetedId, quotedId, media, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, m, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, _m, userId, user, date, bb, hasGeo, placeId, place, createdAt;
 
   return regeneratorRuntime.wrap(function split$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           if (!tweet.id) {
-            _context.next = 92;
+            _context.next = 94;
             break;
           }
 
@@ -252,7 +252,7 @@ function split(receivedAt, collectId, tweet) {
           userId = path.has(tweet, 'user.id') ? tweet.user.id : undefined;
 
           if (!userId) {
-            _context.next = 77;
+            _context.next = 78;
             break;
           }
 
@@ -260,11 +260,13 @@ function split(receivedAt, collectId, tweet) {
 
           user = clean('user', user);
           delete tweet.user;
-          _context.next = 77;
+          date = new Date(user.created_at);
+          _context.next = 78;
           return {
             meta: {
               version: 1,
               type: 'user',
+              createdAt: date.toISOString(),
               receivedAt: receivedAt,
               collectId: collectId
             },
@@ -272,7 +274,7 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 77:
+        case 78:
           // Location
           bb = void 0;
           hasGeo = path.has(tweet, 'coordinates.coordinates');
@@ -284,7 +286,7 @@ function split(receivedAt, collectId, tweet) {
           }
 
           if (!placeId) {
-            _context.next = 87;
+            _context.next = 88;
             break;
           }
 
@@ -297,7 +299,7 @@ function split(receivedAt, collectId, tweet) {
           }
           delete tweet.place;
           // Place
-          _context.next = 87;
+          _context.next = 88;
           return {
             meta: {
               version: 1,
@@ -309,16 +311,17 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 87:
+        case 88:
           // Tweet
           tweet = clean('tweet', tweet);
-          _context.next = 90;
+          createdAt = tweet.timestamp_ms ? new Date(Number(tweet.timestamp_ms)) : new Date(tweet.created_at).toISOString();
+          _context.next = 92;
           return {
             meta: {
               version: 1,
               type: 'tweet',
               receivedAt: receivedAt,
-              createdAt: new Date(Number(tweet.timestamp_ms)),
+              createdAt: createdAt,
               collectId: collectId,
               userId: userId,
               placeId: placeId,
@@ -330,12 +333,12 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 90:
-          _context.next = 94;
+        case 92:
+          _context.next = 96;
           break;
 
-        case 92:
-          _context.next = 94;
+        case 94:
+          _context.next = 96;
           return {
             meta: {
               type: 'other',
@@ -346,7 +349,7 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 94:
+        case 96:
         case 'end':
           return _context.stop();
       }

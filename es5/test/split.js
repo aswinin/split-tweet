@@ -19,7 +19,8 @@ describe('split', function () {
       timestamp_ms: "1475529595743",
       user: {
         id: 5678,
-        login: "toto"
+        login: "toto",
+        created_at: "Thu Mar 14 12:01:17 +0000 2013"
       }
     };
     var data = split(receivedAt, collectId, input);
@@ -29,13 +30,15 @@ describe('split', function () {
       meta: {
         version: 1,
         type: 'user',
+        createdAt: "2013-03-14T12:01:17.000Z",
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10
       },
       data: {
         user: {
           id: 5678,
-          login: "toto"
+          login: "toto",
+          created_at: "Thu Mar 14 12:01:17 +0000 2013"
         }
       }
     });
@@ -74,7 +77,8 @@ describe('split', function () {
       timestamp_ms: "1475529595743",
       user: {
         id: 5678,
-        login: "toto"
+        login: "toto",
+        created_at: "Thu Mar 14 12:01:17 +0000 2013"
       },
       place: { id: 12, city: true, bounding_box: { type: "Polygon", coordinates: [[[-0.3, 51.92], [-0.3, 51.97], [-0.24, 51.97], [-0.24, 51.92]]] } }
     };
@@ -85,13 +89,15 @@ describe('split', function () {
       meta: {
         version: 1,
         type: 'user',
+        createdAt: "2013-03-14T12:01:17.000Z",
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10
       },
       data: {
         user: {
           id: 5678,
-          login: "toto"
+          login: "toto",
+          created_at: "Thu Mar 14 12:01:17 +0000 2013"
         }
       }
     });
@@ -143,6 +149,7 @@ describe('split', function () {
       timestamp_ms: "1475529595743",
       user: {
         id: 5678,
+        created_at: "Thu Mar 14 12:01:17 +0000 2013",
         login: "toto"
       },
       place: { id: 12, city: true, bounding_box: { type: "Polygon", coordinates: [[[-0.3, 51.92], [-0.3, 51.97], [-0.24, 51.97], [-0.24, 51.92]]] } },
@@ -158,13 +165,15 @@ describe('split', function () {
       meta: {
         version: 1,
         type: 'user',
+        createdAt: "2013-03-14T12:01:17.000Z",
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10
       },
       data: {
         user: {
           id: 5678,
-          login: "toto"
+          login: "toto",
+          created_at: "Thu Mar 14 12:01:17 +0000 2013"
         }
       }
     });
@@ -233,18 +242,21 @@ describe('split', function () {
       id: 1234,
       text: "Yes",
       timestamp_ms: "1475529595743",
+      created_at: "Thu Mar 14 12:01:17 +0000 2013",
       retweeted_status: {
         id: 4321,
         text: "No",
-        timestamp_ms: "1475529594000",
+        created_at: "Thu Mar 14 12:01:17 +0000 2013",
         user: {
           id: 8765,
+          created_at: "Thu Mar 14 12:01:17 +0000 2013",
           login: "lili"
         }
       },
       user: {
         id: 5678,
-        login: "toto"
+        login: "toto",
+        created_at: "Thu Mar 14 12:01:17 +0000 2013"
       }
     };
     var data = split(receivedAt, collectId, input);
@@ -254,13 +266,15 @@ describe('split', function () {
       meta: {
         version: 1,
         type: 'user',
+        createdAt: "2013-03-14T12:01:17.000Z",
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10
       },
       data: {
         user: {
           id: 8765,
-          login: "lili"
+          login: "lili",
+          created_at: "Thu Mar 14 12:01:17 +0000 2013"
         }
       }
     });
@@ -270,7 +284,7 @@ describe('split', function () {
       meta: {
         version: 1,
         type: 'tweet',
-        createdAt: new Date("2016-10-03T21:19:54.000Z"),
+        createdAt: "2013-03-14T12:01:17.000Z",
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10,
         userId: 8765,
@@ -283,7 +297,7 @@ describe('split', function () {
         tweet: {
           id: 4321,
           text: "No",
-          timestamp_ms: "1475529594000"
+          created_at: "Thu Mar 14 12:01:17 +0000 2013"
         }
       }
     });
@@ -293,13 +307,15 @@ describe('split', function () {
       meta: {
         version: 1,
         type: 'user',
+        createdAt: "2013-03-14T12:01:17.000Z",
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10
       },
       data: {
         user: {
           id: 5678,
-          login: "toto"
+          login: "toto",
+          created_at: "Thu Mar 14 12:01:17 +0000 2013"
         }
       }
     });
@@ -322,6 +338,7 @@ describe('split', function () {
         tweet: {
           id: 1234,
           text: "Yes",
+          created_at: "Thu Mar 14 12:01:17 +0000 2013",
           timestamp_ms: "1475529595743"
         }
       }
@@ -335,19 +352,22 @@ describe('split', function () {
     var input = {
       id: 1234,
       text: "Yes",
+      created_at: "Thu Mar 14 12:01:17 +0000 2013",
       timestamp_ms: "1475529595743",
       quoted_status: {
         id: 4321,
         text: "No",
-        timestamp_ms: "1475529594000",
+        created_at: "Thu Mar 14 12:01:17 +0000 2013",
         user: {
           id: 8765,
-          login: "lili"
+          login: "lili",
+          created_at: "Thu Mar 14 12:01:17 +0000 2013"
         }
       },
       user: {
         id: 5678,
-        login: "toto"
+        login: "toto",
+        created_at: "Thu Mar 14 12:01:17 +0000 2013"
       }
     };
     var data = split(receivedAt, collectId, input);
@@ -357,13 +377,15 @@ describe('split', function () {
       meta: {
         version: 1,
         type: 'user',
+        createdAt: "2013-03-14T12:01:17.000Z",
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10
       },
       data: {
         user: {
           id: 8765,
-          login: "lili"
+          login: "lili",
+          created_at: "Thu Mar 14 12:01:17 +0000 2013"
         }
       }
     });
@@ -373,7 +395,7 @@ describe('split', function () {
       meta: {
         version: 1,
         type: 'tweet',
-        createdAt: new Date("2016-10-03T21:19:54.000Z"),
+        createdAt: "2013-03-14T12:01:17.000Z",
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10,
         userId: 8765,
@@ -386,7 +408,7 @@ describe('split', function () {
         tweet: {
           id: 4321,
           text: "No",
-          timestamp_ms: "1475529594000"
+          created_at: "Thu Mar 14 12:01:17 +0000 2013"
         }
       }
     });
@@ -396,13 +418,15 @@ describe('split', function () {
       meta: {
         version: 1,
         type: 'user',
+        createdAt: "2013-03-14T12:01:17.000Z",
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10
       },
       data: {
         user: {
           id: 5678,
-          login: "toto"
+          login: "toto",
+          created_at: "Thu Mar 14 12:01:17 +0000 2013"
         }
       }
     });
@@ -425,6 +449,7 @@ describe('split', function () {
         tweet: {
           id: 1234,
           text: "Yes",
+          created_at: "Thu Mar 14 12:01:17 +0000 2013",
           timestamp_ms: "1475529595743"
         }
       }
@@ -438,12 +463,14 @@ describe('split', function () {
     var input = {
       id: 1234,
       text: "Yes",
+      created_at: "Thu Mar 14 12:01:17 +0000 2013",
       timestamp_ms: "1475529595743",
       entities: {
         media: [{ id: 100 }]
       },
       user: {
         id: 5678,
+        created_at: "Thu Mar 14 12:01:17 +0000 2013",
         login: "toto"
       }
     };
@@ -468,13 +495,15 @@ describe('split', function () {
       meta: {
         version: 1,
         type: 'user',
+        createdAt: "2013-03-14T12:01:17.000Z",
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10
       },
       data: {
         user: {
           id: 5678,
-          login: "toto"
+          login: "toto",
+          created_at: "Thu Mar 14 12:01:17 +0000 2013"
         }
       }
     });
@@ -497,6 +526,7 @@ describe('split', function () {
         tweet: {
           id: 1234,
           text: "Yes",
+          created_at: "Thu Mar 14 12:01:17 +0000 2013",
           timestamp_ms: "1475529595743"
         }
       }
@@ -519,6 +549,7 @@ describe('split', function () {
       },
       user: {
         id: 5678,
+        created_at: "Thu Mar 14 12:01:17 +0000 2013",
         login: "toto"
       }
     };
@@ -557,13 +588,15 @@ describe('split', function () {
       meta: {
         version: 1,
         type: 'user',
+        createdAt: "2013-03-14T12:01:17.000Z",
         receivedAt: "2016-10-13T07:59:09.324Z",
         collectId: 10
       },
       data: {
         user: {
           id: 5678,
-          login: "toto"
+          login: "toto",
+          created_at: "Thu Mar 14 12:01:17 +0000 2013"
         }
       }
     });
