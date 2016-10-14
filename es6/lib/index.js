@@ -19,21 +19,41 @@ function keep_only_fields_with_data(isRemovable, tweet) {
 
 function* split(receivedAt, collectId, tweet) {
   if (tweet.id) {
+    // Retweet
     const retweetedId = isSet(tweet, 'retweeted_status.id') ? tweet.retweeted_status.id : undefined; 
     if (retweetedId) {
       yield* split(receivedAt, collectId, tweet.retweeted_status);
       delete tweet.retweeted_status;
     }
+    // Quoted tweet
     const quotedId = isSet(tweet, 'quoted_status.id') ? tweet.quoted_status.id : undefined; 
     if (quotedId) {
       yield* split(receivedAt, collectId, tweet.quoted_status);
       delete tweet.quoted_status;
     }
+    // Media
+    let media = new Set();
+    if (isSet(tweet, 'entities.media.length') && tweet.entities.media.length > 0) {
+      for (let m of tweet.entities.media) {
+        media.add(m.id);
+        yield {
+          meta: { 
+            type: 'media', 
+            receivedAt: receivedAt, 
+            collectId: collectId, 
+          }, 
+          data: { media: m },
+          version: 1,
+        };
+      }
+      delete tweet.entities.media;
+    }
+    // User
     const userId = isSet(tweet, 'user.id') ? tweet.user.id : undefined; 
     if (userId) {
       const user = tweet.user;
       delete tweet.user;
-      yield({ 
+      yield { 
         meta: { 
           version: 1, 
           type: 'user', 
@@ -42,12 +62,14 @@ function* split(receivedAt, collectId, tweet) {
         }, 
         data: { user: user },
         version: 1,
-      });
+      };
     }
+    // Location
     let bb; 
     const hasGeo = isSet(tweet, 'coordinates.coordinates'); 
     const placeId = isSet(tweet, 'place.id') ? tweet.place.id : undefined;
     if (hasGeo) {
+      // Point
       bb = tweet['coordinates'];
     }
     if (placeId) {
@@ -58,7 +80,8 @@ function* split(receivedAt, collectId, tweet) {
         bb.coordinates[0].push( bb.coordinates[0][0] );
       }
       delete tweet.place;
-      yield({ 
+      // Place
+      yield { 
         meta: { 
           version: 1, 
           type: 'place', 
@@ -67,9 +90,10 @@ function* split(receivedAt, collectId, tweet) {
         }, 
         data: { place: place },
         version: 1,
-      });
+      };
     }
-    yield({ 
+    // Tweet
+    yield { 
       meta: { 
         version: 1,
         type: 'tweet',
@@ -80,12 +104,14 @@ function* split(receivedAt, collectId, tweet) {
         placeId: placeId,
         retweetedId: retweetedId,
         geo: bb,
+        media: Array.from(media),
       }, 
       data: { tweet: tweet }, 
       version: 1,
-    });
+    };
   } else {
-    yield({ 
+    // Other
+    yield { 
       meta: { 
         type: 'other',
         receivedAt: receivedAt, 
@@ -93,7 +119,7 @@ function* split(receivedAt, collectId, tweet) {
       }, 
       data: { other: tweet }, 
       version: 1,
-    });
+    };
   }
 }
 

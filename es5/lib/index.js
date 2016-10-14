@@ -23,16 +23,18 @@ function keep_only_fields_with_data(isRemovable, tweet) {
 }
 
 function split(receivedAt, collectId, tweet) {
-  var retweetedId, quotedId, userId, user, bb, hasGeo, placeId, place;
+  var retweetedId, quotedId, media, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, m, userId, user, bb, hasGeo, placeId, place;
+
   return regeneratorRuntime.wrap(function split$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           if (!tweet.id) {
-            _context.next = 29;
+            _context.next = 59;
             break;
           }
 
+          // Retweet
           retweetedId = isSet(tweet, 'retweeted_status.id') ? tweet.retweeted_status.id : undefined;
 
           if (!retweetedId) {
@@ -46,6 +48,7 @@ function split(receivedAt, collectId, tweet) {
           delete tweet.retweeted_status;
 
         case 5:
+          // Quoted tweet
           quotedId = isSet(tweet, 'quoted_status.id') ? tweet.quoted_status.id : undefined;
 
           if (!quotedId) {
@@ -59,17 +62,95 @@ function split(receivedAt, collectId, tweet) {
           delete tweet.quoted_status;
 
         case 9:
+          // Media
+          media = new Set();
+
+          if (!(isSet(tweet, 'entities.media.length') && tweet.entities.media.length > 0)) {
+            _context.next = 39;
+            break;
+          }
+
+          _iteratorNormalCompletion = true;
+          _didIteratorError = false;
+          _iteratorError = undefined;
+          _context.prev = 14;
+          _iterator = tweet.entities.media[Symbol.iterator]();
+
+        case 16:
+          if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
+            _context.next = 24;
+            break;
+          }
+
+          m = _step.value;
+
+          media.add(m.id);
+          _context.next = 21;
+          return {
+            meta: {
+              type: 'media',
+              receivedAt: receivedAt,
+              collectId: collectId
+            },
+            data: { media: m },
+            version: 1
+          };
+
+        case 21:
+          _iteratorNormalCompletion = true;
+          _context.next = 16;
+          break;
+
+        case 24:
+          _context.next = 30;
+          break;
+
+        case 26:
+          _context.prev = 26;
+          _context.t2 = _context['catch'](14);
+          _didIteratorError = true;
+          _iteratorError = _context.t2;
+
+        case 30:
+          _context.prev = 30;
+          _context.prev = 31;
+
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+
+        case 33:
+          _context.prev = 33;
+
+          if (!_didIteratorError) {
+            _context.next = 36;
+            break;
+          }
+
+          throw _iteratorError;
+
+        case 36:
+          return _context.finish(33);
+
+        case 37:
+          return _context.finish(30);
+
+        case 38:
+          delete tweet.entities.media;
+
+        case 39:
+          // User
           userId = isSet(tweet, 'user.id') ? tweet.user.id : undefined;
 
           if (!userId) {
-            _context.next = 15;
+            _context.next = 45;
             break;
           }
 
           user = tweet.user;
 
           delete tweet.user;
-          _context.next = 15;
+          _context.next = 45;
           return {
             meta: {
               version: 1,
@@ -81,17 +162,19 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 15:
+        case 45:
+          // Location
           bb = void 0;
           hasGeo = isSet(tweet, 'coordinates.coordinates');
           placeId = isSet(tweet, 'place.id') ? tweet.place.id : undefined;
 
           if (hasGeo) {
+            // Point
             bb = tweet['coordinates'];
           }
 
           if (!placeId) {
-            _context.next = 25;
+            _context.next = 55;
             break;
           }
 
@@ -103,7 +186,8 @@ function split(receivedAt, collectId, tweet) {
             bb.coordinates[0].push(bb.coordinates[0][0]);
           }
           delete tweet.place;
-          _context.next = 25;
+          // Place
+          _context.next = 55;
           return {
             meta: {
               version: 1,
@@ -115,8 +199,8 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 25:
-          _context.next = 27;
+        case 55:
+          _context.next = 57;
           return {
             meta: {
               version: 1,
@@ -127,18 +211,19 @@ function split(receivedAt, collectId, tweet) {
               userId: userId,
               placeId: placeId,
               retweetedId: retweetedId,
-              geo: bb
+              geo: bb,
+              media: Array.from(media)
             },
             data: { tweet: tweet },
             version: 1
           };
 
-        case 27:
-          _context.next = 31;
+        case 57:
+          _context.next = 61;
           break;
 
-        case 29:
-          _context.next = 31;
+        case 59:
+          _context.next = 61;
           return {
             meta: {
               type: 'other',
@@ -149,12 +234,12 @@ function split(receivedAt, collectId, tweet) {
             version: 1
           };
 
-        case 31:
+        case 61:
         case 'end':
           return _context.stop();
       }
     }
-  }, _marked[0], this);
+  }, _marked[0], this, [[14, 26, 30, 38], [31,, 33, 37]]);
 }
 
 module.exports = {
