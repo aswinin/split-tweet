@@ -72,6 +72,19 @@ function removeRedundantUnecessaryNullOrEmptyFields(type, object) {
   return removeNullOrEmptyFields(object);
 }
 
+function buildMediaObject(receivedAt, collectId, m) {
+  m = removeRedundantUnecessaryNullOrEmptyFields('media', m);
+  return {
+    meta: { 
+      type: 'media', 
+      receivedAt: receivedAt, 
+      collectId: collectId, 
+    }, 
+    data: { media: m },
+    version: 1,
+  };
+}
+
 function* split(receivedAt, collectId, tweet) {
   if (tweet.id) {
     // Remove redundant fiels
@@ -92,16 +105,7 @@ function* split(receivedAt, collectId, tweet) {
     let media = new Set();
     if (isSet(tweet, 'entities.media.length') && tweet.entities.media.length > 0) {
       for (let m of tweet.entities.media) {
-        m = removeRedundantUnecessaryNullOrEmptyFields('media', m);
-        yield {
-          meta: { 
-            type: 'media', 
-            receivedAt: receivedAt, 
-            collectId: collectId, 
-          }, 
-          data: { media: m },
-          version: 1,
-        };
+        yield buildMediaObject(receivedAt, collectId, m);
         media.add(m.id);
       }
       delete tweet.entities.media;
@@ -109,15 +113,7 @@ function* split(receivedAt, collectId, tweet) {
     if (isSet(tweet, 'extended_entities.media.length') && tweet.extended_entities.media.length > 0) {
       for (let m of tweet.extended_entities.media) {
         if (!media.has(m.id)) {
-          yield {
-            meta: { 
-              type: 'media', 
-              receivedAt: receivedAt, 
-              collectId: collectId, 
-            }, 
-            data: { media: m },
-            version: 1,
-          };
+          yield buildMediaObject(receivedAt, collectId, m);
           media.add(m.id);
         }
       }
@@ -126,7 +122,8 @@ function* split(receivedAt, collectId, tweet) {
     // User
     const userId = isSet(tweet, 'user.id') ? tweet.user.id : undefined; 
     if (userId) {
-      const user = tweet.user;
+      let user = tweet.user;
+      user = removeRedundantUnecessaryNullOrEmptyFields('user', user);
       delete tweet.user;
       yield { 
         meta: { 
@@ -168,6 +165,7 @@ function* split(receivedAt, collectId, tweet) {
       };
     }
     // Tweet
+    tweet = removeRedundantUnecessaryNullOrEmptyFields('tweet', tweet);
     yield { 
       meta: { 
         version: 1,
