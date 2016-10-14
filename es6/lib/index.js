@@ -5,8 +5,48 @@ const traverse = require('traverse');
 const clone = require('clone');
 const diff = require('deep-diff').diff;
 const isSet = require("object-path").has;
+const setNull = require("object-path").empty;
 
-function isRemovableFieldWithValue(x) {
+function redundantFields() {
+  return {
+    tweet: [
+      'id_str',
+      'in_reply_to_status_id_str',
+      'in_reply_to_user_id_str',
+      'geo',
+    ],
+    user: [
+      'id_str',
+      'profile_background_image_url_https',
+      'profile_image_url_https',
+    ],
+    media: [
+      'id_str',
+      'media_url_https',
+    ],
+  }; 
+}
+
+function unecessaryFields() {
+  return {
+    tweet: [],
+    user: [
+      'profile_background_color',
+      'profile_background_tile',
+      'profile_link_color',
+      'profile_sidebar_border_color',
+      'profile_sidebar_fill_color',
+      'profile_text_color',
+    ],
+    media: [
+      'display_url',
+      'expanded_url',
+      'sizes',
+    ],
+  }; 
+}
+
+function isNullOrEmpty(x) {
   return x === null 
       || x === undefined 
       || x === '' 
@@ -15,19 +55,27 @@ function isRemovableFieldWithValue(x) {
   ;
 }
 
-function keep_only_fields_with_data(tweet) {
+function removeNullOrEmptyFields(tweet) {
   let tweet0;
   while ( diff(tweet0, tweet) ) {
     tweet0 = clone(tweet);
     tweet = traverse(tweet).forEach(function (x) {
-      if ( isRemovableFieldWithValue(x) ) { this.remove(); }
+      if ( isNullOrEmpty(x) ) { this.remove(); }
     });
   }
   return tweet;
 }
 
+function removeRedundantUnecessaryNullOrEmptyFields(type, object) {
+  for (f in redundantFields[type]) setNull(object, f);
+  for (f in unecessaryFields[type]) setNull(object, f);
+  return removeNullOrEmptyFields(object);
+}
+
 function* split(receivedAt, collectId, tweet) {
   if (tweet.id) {
+    // Remove redundant fiels
+    for (f in fields.tweet) setNull(tweet, f);
     // Retweet
     const retweetedId = isSet(tweet, 'retweeted_status.id') ? tweet.retweeted_status.id : undefined; 
     if (retweetedId) {
@@ -44,6 +92,7 @@ function* split(receivedAt, collectId, tweet) {
     let media = new Set();
     if (isSet(tweet, 'entities.media.length') && tweet.entities.media.length > 0) {
       for (let m of tweet.entities.media) {
+        for (f in fields.media) setNull(m, f);
         yield {
           meta: { 
             type: 'media', 
@@ -150,6 +199,8 @@ function* split(receivedAt, collectId, tweet) {
 }
 
 module.exports = { 
-  keep_only_fields_with_data,
+  isNullOrEmpty,
+  removeNullOrEmptyFields,
+  removeRedundantUnecessaryNullOrEmptyFields,
   split,
 };
