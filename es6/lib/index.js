@@ -35,7 +35,6 @@ function* split(receivedAt, collectId, tweet) {
     let media = new Set();
     if (isSet(tweet, 'entities.media.length') && tweet.entities.media.length > 0) {
       for (let m of tweet.entities.media) {
-        media.add(m.id);
         yield {
           meta: { 
             type: 'media', 
@@ -45,8 +44,26 @@ function* split(receivedAt, collectId, tweet) {
           data: { media: m },
           version: 1,
         };
+        media.add(m.id);
       }
       delete tweet.entities.media;
+    }
+    if (isSet(tweet, 'extended_entities.media.length') && tweet.extended_entities.media.length > 0) {
+      for (let m of tweet.extended_entities.media) {
+        if (!media.has(m.id)) {
+          yield {
+            meta: { 
+              type: 'media', 
+              receivedAt: receivedAt, 
+              collectId: collectId, 
+            }, 
+            data: { media: m },
+            version: 1,
+          };
+          media.add(m.id);
+        }
+      }
+      delete tweet.extended_entities.media;
     }
     // User
     const userId = isSet(tweet, 'user.id') ? tweet.user.id : undefined; 

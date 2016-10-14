@@ -505,4 +505,95 @@ describe('split', function () {
 
     test.bool(data.next().done).isTrue;
   });
+
+  it('decomposes a tweet with many media in a user, a message and many media', function () {
+
+    var input = {
+      id: 1234,
+      text: "Yes",
+      timestamp_ms: "1475529595743",
+      entities: {
+        media: [{ id: 100 }]
+      },
+      extended_entities: {
+        media: [{ id: 100 }, { id: 200 }]
+      },
+      user: {
+        id: 5678,
+        login: "toto"
+      }
+    };
+    var data = split(receivedAt, collectId, input);
+
+    test.object(data.next().value).is({
+      version: 1,
+      meta: {
+        type: 'media',
+        receivedAt: "2016-10-13T07:59:09.324Z",
+        collectId: 10
+      },
+      data: {
+        media: {
+          id: 100
+        }
+      }
+    });
+
+    test.object(data.next().value).is({
+      version: 1,
+      meta: {
+        type: 'media',
+        receivedAt: "2016-10-13T07:59:09.324Z",
+        collectId: 10
+      },
+      data: {
+        media: {
+          id: 200
+        }
+      }
+    });
+
+    test.object(data.next().value).is({
+      version: 1,
+      meta: {
+        version: 1,
+        type: 'user',
+        receivedAt: "2016-10-13T07:59:09.324Z",
+        collectId: 10
+      },
+      data: {
+        user: {
+          id: 5678,
+          login: "toto"
+        }
+      }
+    });
+
+    test.object(data.next().value).is({
+      version: 1,
+      meta: {
+        version: 1,
+        type: 'tweet',
+        createdAt: createdAt,
+        receivedAt: "2016-10-13T07:59:09.324Z",
+        collectId: 10,
+        userId: 5678,
+        geo: undefined,
+        placeId: undefined,
+        retweetedId: undefined,
+        media: [100, 200]
+      },
+      data: {
+        tweet: {
+          id: 1234,
+          text: "Yes",
+          timestamp_ms: "1475529595743",
+          entities: {},
+          extended_entities: {}
+        }
+      }
+    });
+
+    test.bool(data.next().done).isTrue;
+  });
 });
