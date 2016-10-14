@@ -324,4 +324,104 @@ describe('split', function () {
 
     test.bool(data.next().done).isTrue;
   });
+  it('decomposes a quote in a user, a message, another user and another message', function () {
+
+    var input = {
+      id: 1234,
+      text: "Yes",
+      timestamp_ms: "1475529595743",
+      quoted_status: {
+        id: 4321,
+        text: "No",
+        timestamp_ms: "1475529594000",
+        user: {
+          id: 8765,
+          login: "lili"
+        }
+      },
+      user: {
+        id: 5678,
+        login: "toto"
+      }
+    };
+    var data = split(receivedAt, collectId, input);
+
+    test.object(data.next().value).is({
+      version: 1,
+      meta: {
+        version: 1,
+        type: 'user',
+        receivedAt: "2016-10-13T07:59:09.324Z",
+        collectId: 10
+      },
+      data: {
+        user: {
+          id: 8765,
+          login: "lili"
+        }
+      }
+    });
+
+    test.object(data.next().value).is({
+      version: 1,
+      meta: {
+        version: 1,
+        type: 'tweet',
+        createdAt: new Date("2016-10-03T21:19:54.000Z"),
+        receivedAt: "2016-10-13T07:59:09.324Z",
+        collectId: 10,
+        userId: 8765,
+        geo: undefined,
+        placeId: undefined,
+        retweetedId: undefined
+      },
+      data: {
+        tweet: {
+          id: 4321,
+          text: "No",
+          timestamp_ms: "1475529594000"
+        }
+      }
+    });
+
+    test.object(data.next().value).is({
+      version: 1,
+      meta: {
+        version: 1,
+        type: 'user',
+        receivedAt: "2016-10-13T07:59:09.324Z",
+        collectId: 10
+      },
+      data: {
+        user: {
+          id: 5678,
+          login: "toto"
+        }
+      }
+    });
+
+    test.object(data.next().value).is({
+      version: 1,
+      meta: {
+        version: 1,
+        type: 'tweet',
+        createdAt: createdAt,
+        receivedAt: "2016-10-13T07:59:09.324Z",
+        collectId: 10,
+        userId: 5678,
+        geo: undefined,
+        placeId: undefined,
+        retweetedId: undefined
+      },
+      data: {
+        tweet: {
+          id: 1234,
+          text: "Yes",
+          timestamp_ms: "1475529595743"
+        }
+      }
+    });
+
+    test.bool(data.next().done).isTrue;
+  });
 });
